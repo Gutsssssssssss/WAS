@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public class WebApplicationServer {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         try (ServerSocket serverSocket = new ServerSocket(8080)) {
             while (true) {
