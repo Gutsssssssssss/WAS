@@ -18,11 +18,8 @@ public class WebApplicationServer {
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {
-                try (Socket connection = serverSocket.accept()) {
-                    executorService.execute(new RequestHandler(connection));
-                } catch (IOException e) {
-                    System.err.println("클라이트 요청 수락 실패: " + e.getMessage());
-                }
+                Socket connection = serverSocket.accept();
+                executorService.execute(new RequestHandler(connection));
             }
         } catch (IOException e) {
             System.err.println("클라이트 요청 수락 실패: " + e.getMessage());

@@ -1,5 +1,7 @@
 package core;
 
+import http.request.HttpRequest;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -16,21 +18,14 @@ public class RequestHandler implements Runnable {
 
         // 요청으로부터 데이터 읽어들이는 부분
         // Request 에게 위임
-        try (InputStream is = connection.getInputStream()) {
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
+        try (   Socket socket = connection;
+                InputStream is = socket.getInputStream();
+                OutputStream os = socket.getOutputStream()) {
 
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.isEmpty()) {
-                    break;
-                }
-                System.out.println(line);
-            }
+            HttpRequest parsedRequest = HttpRequest.from(is);
 
             // 응답으로 데이터를 보내는 부분
             // Response 에게 위임
-            OutputStream os = connection.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(os);
             BufferedWriter bw = new BufferedWriter(osw);
             String httpResponse =
