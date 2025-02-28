@@ -6,6 +6,12 @@ import java.util.Map;
 
 public class Path {
 
+    private static final String QUERY_STRING_DELIMITER = "?";
+    private static final String QUERY_STRING_PARTS_DELIMITER = "&";
+    private static final String KEY_VALUE_DELIMITER = "=";
+    private static final int QUERY_STRING_NOT_FOUND = -1;
+
+
     private final String path;
     private final Map<String, String> query;
 
@@ -15,11 +21,11 @@ public class Path {
     }
 
     public static Path from(String fullPath) {
-        int queryIndex = fullPath.indexOf("?");
+        int queryIndex = fullPath.indexOf(QUERY_STRING_DELIMITER);
 
         String path;
         Map<String, String> query;
-        if (queryIndex != -1) {
+        if (queryIndex != QUERY_STRING_NOT_FOUND) {
             path = fullPath.substring(0, queryIndex);
             query = parseQuery(fullPath.substring(queryIndex + 1));
         } else {
@@ -31,9 +37,9 @@ public class Path {
 
     private static Map<String, String> parseQuery(String query) {
         Map<String, String> queryMap = new HashMap<>();
-        String[] parts = query.split("&");
+        String[] parts = query.split(QUERY_STRING_PARTS_DELIMITER);
         for (String part : parts) {
-            String[] keyValue = part.split("=");
+            String[] keyValue = part.split(KEY_VALUE_DELIMITER, 2);
             String key = keyValue[0];
             String value = keyValue.length > 1 ? keyValue[1] : "";
             queryMap.put(key, value);

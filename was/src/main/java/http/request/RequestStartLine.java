@@ -4,6 +4,8 @@ import http.HttpMethod;
 
 public class RequestStartLine {
 
+    private static final String START_LINE_DELIMITER = "\\s+";
+
     private final HttpMethod method;
     private final Path path;
     private final HttpVersion version;
@@ -19,7 +21,7 @@ public class RequestStartLine {
             throw new IllegalArgumentException("Start line cannot be null or empty");
         }
 
-        String[] parts = startLine.split("\\s+");
+        String[] parts = startLine.split(START_LINE_DELIMITER);
         if (parts.length != 3) {
             throw new IllegalArgumentException("Invalid HTTP start line format: " + startLine);
         }
