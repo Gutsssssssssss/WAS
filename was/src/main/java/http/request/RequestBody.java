@@ -16,16 +16,17 @@ public class RequestBody {
     }
 
     public static RequestBody from(BufferedReader br, int contentLength) throws IOException {
-        if (contentLength > 0) {
-            char[] buffer = new char[contentLength];
-            br.read(buffer, 0, contentLength);
-
-            String requestBody = new String(buffer).trim();
-            Map<String, String> parsedBody = RequestParser.parseQuery(requestBody);
-
-            return new RequestBody(parsedBody);
+        if (contentLength == 0) {
+            return empty();
         }
-        return empty();
+
+        char[] buffer = new char[contentLength];
+        br.read(buffer, 0, contentLength);
+
+        String requestBody = new String(buffer).trim();
+        Map<String, String> parsedBody = RequestParser.parseQuery(requestBody);
+
+        return new RequestBody(parsedBody);
     }
 
 
