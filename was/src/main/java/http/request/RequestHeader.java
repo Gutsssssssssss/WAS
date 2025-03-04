@@ -13,19 +13,7 @@ public class RequestHeader {
     }
 
     public static RequestHeader from(BufferedReader br) throws IOException {
-        HashMap<String, String> parsedHeader = new HashMap<>();
-
-        String line;
-        while ((line = br.readLine()) != null && !line.isEmpty()) {
-            int idx = line.indexOf(":");
-            if (idx != -1) {
-                String key = line.substring(0, idx).trim();
-                String value = line.substring(idx + 1).trim();
-                parsedHeader.put(key, value);
-            }
-        }
-
-        return new RequestHeader(parsedHeader);
+        return new RequestHeader(RequestParser.parseHeader(br));
     }
 
     public Map<String, String> getHeaders() {
