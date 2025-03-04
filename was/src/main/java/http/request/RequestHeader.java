@@ -26,8 +26,15 @@ public class RequestHeader {
         return new RequestHeader(parsedHeader);
     }
 
-
     public Map<String, String> getHeaders() {
         return headers;
+    }
+
+    public int getContentLength() {
+        String contentLength = headers.get("Content-Length");
+        if (contentLength == null) {
+            return 0;
+        }
+        return Integer.parseInt(contentLength);
     }
 }

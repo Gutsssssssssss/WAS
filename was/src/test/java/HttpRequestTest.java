@@ -1,11 +1,10 @@
 import http.HttpMethod;
-import http.request.HttpVersion;
-import http.request.Path;
-import http.request.RequestHeader;
-import http.request.RequestStartLine;
+import http.request.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +72,6 @@ public class HttpRequestTest {
         assertThrows(IllegalArgumentException.class, () -> RequestStartLine.from(startLine));
     }
 
-
     @Test
     @DisplayName("요청 헤더 파싱 테스트")
     void testRequestHeaderParsing() {
@@ -90,4 +88,47 @@ public class HttpRequestTest {
         assertEquals("keep-alive", headers.get("Connection"));
         assertEquals("Mozilla/5.0", headers.get("User-Agent"));
     }
+
+    @Test
+    @DisplayName("요청 바디 파싱 테스트")
+    void testRequestBodyParsing() throws IOException {
+        String requestBody = "username=jm&password=123123";
+        int contentLength = requestBody.getBytes(StandardCharsets.UTF_8).length;
+        BufferedReader br = new BufferedReader(new StringReader(requestBody));
+
+        RequestBody from = RequestBody.from(br, contentLength);
+        assertEquals("jm", from.getBody().get("username"));
+        assertEquals("123123", from.getBody().get("password"));
+    }
+
+    @Test
+    @DisplayName("요청 바디 비었을 때 파싱 테스트")
+    void testRequestBodyWithEmpty() throws IOException {
+        String requestBody = "";
+        int contentLength = requestBody.getBytes(StandardCharsets.UTF_8).length;
+        BufferedReader br = new BufferedReader(new StringReader(requestBody));
+
+        RequestBody from = RequestBody.from(br, contentLength);
+        assertTrue(from.getBody().isEmpty());
+    }
+
+    @Test
+    @DisplayName("최종 요청 객체 생성 테스트")
+    void testHttpRequestInstance() throws IOException {
+        String requestMessage =
+                        "POST /login HTTP/1.1\r\n" +
+                        "Host: localhost:8080\r\n" +
+                        "Content-Type: application/x-www-form-urlencoded\r\n" +
+                        "Content-Length: 34\r\n" +
+                        "Connection: keep-alive\r\n" +
+                        "\r\n" +
+                        "username=jm&password=123123&rememberMe=true";
+        InputStream is = new ByteArrayInputStream(requestMessage.getBytes(StandardCharsets.UTF_8));
+        HttpRequest request = HttpRequest.from(is);
+
+        assertEquals(HttpMethod.POST, request.getRequestStartLine().getMethod());
+        assertEquals(34, request.getRequestHeader().getContentLength());
+        assertEquals("jm", request.getRequestBody().getBody().get("username"));
+    }
+
 }
