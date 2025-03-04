@@ -13,21 +13,18 @@ public class RequestHeader {
     }
 
     public static RequestHeader from(BufferedReader br) throws IOException {
-        List<String> headerList = new ArrayList<>();
+        HashMap<String, String> parsedHeader = new HashMap<>();
+
         String line;
         while ((line = br.readLine()) != null && !line.isEmpty()) {
-            headerList.add(line);
-        }
-
-        HashMap<String, String> parsedHeader = new HashMap<>();
-        for (String s : headerList) {
-            int idx = s.indexOf(":");
+            int idx = line.indexOf(":");
             if (idx != -1) {
-                String key = s.substring(0, idx).trim();
-                String value = s.substring(idx + 1).trim();
+                String key = line.substring(0, idx).trim();
+                String value = line.substring(idx + 1).trim();
                 parsedHeader.put(key, value);
             }
         }
+
         return new RequestHeader(parsedHeader);
     }
 
