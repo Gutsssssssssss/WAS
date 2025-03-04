@@ -1,4 +1,5 @@
 import http.HttpMethod;
+import http.HttpVersion;
 import http.request.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
