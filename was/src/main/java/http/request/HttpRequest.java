@@ -14,10 +14,8 @@ public class HttpRequest {
     private RequestHeader requestHeader;
     private RequestBody requestBody;
 
-    public HttpRequest() {
-    }
 
-    public HttpRequest(RequestStartLine requestStartLine, RequestHeader requestHeader, RequestBody requestBody) {
+    private HttpRequest(RequestStartLine requestStartLine, RequestHeader requestHeader, RequestBody requestBody) {
         this.requestStartLine = requestStartLine;
         this.requestHeader = requestHeader;
         this.requestBody = requestBody;
@@ -25,16 +23,26 @@ public class HttpRequest {
 
     public static HttpRequest from(InputStream is) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        String startLine = br.readLine();
 
-        List<String> headerList = new ArrayList<>();
-        String line;
-        while ((line = br.readLine()) != null && !line.isEmpty()) {
-            headerList.add(line);
-        }
-        RequestHeader header = RequestHeader.from(headerList);
+        RequestStartLine parsedStartLine = RequestStartLine.from(br);
 
-        return new HttpRequest();
+        RequestHeader parsedHeader = RequestHeader.from(br);
+
+        int contentLength = parsedHeader.getContentLength();
+        RequestBody paresedRequestBody = RequestBody.from(br, contentLength);
+
+        return new HttpRequest(parsedStartLine, parsedHeader, paresedRequestBody);
     }
 
+    public RequestStartLine getRequestStartLine() {
+        return requestStartLine;
+    }
+
+    public RequestHeader getRequestHeader() {
+        return requestHeader;
+    }
+
+    public RequestBody getRequestBody() {
+        return requestBody;
+    }
 }

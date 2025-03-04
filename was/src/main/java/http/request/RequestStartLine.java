@@ -3,6 +3,10 @@ package http.request;
 import http.HttpMethod;
 import http.HttpVersion;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.Buffer;
+
 public class RequestStartLine {
 
     private static final String START_LINE_DELIMITER = "\\s+";
@@ -17,7 +21,8 @@ public class RequestStartLine {
         this.version = version;
     }
 
-    public static RequestStartLine from(String startLine) {
+    public static RequestStartLine from(BufferedReader br) throws IOException {
+        String startLine = br.readLine();
         if (startLine == null || startLine.isEmpty()) {
             throw new IllegalArgumentException("Start line cannot be null or empty");
         }

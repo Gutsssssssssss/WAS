@@ -1,9 +1,8 @@
 package http.request;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.*;
 
 public class RequestHeader {
 
@@ -13,7 +12,13 @@ public class RequestHeader {
         this.headers = Map.copyOf(headers);
     }
 
-    public static RequestHeader from(List<String> headerList) {
+    public static RequestHeader from(BufferedReader br) throws IOException {
+        List<String> headerList = new ArrayList<>();
+        String line;
+        while ((line = br.readLine()) != null && !line.isEmpty()) {
+            headerList.add(line);
+        }
+
         HashMap<String, String> parsedHeader = new HashMap<>();
         for (String s : headerList) {
             int idx = s.indexOf(":");

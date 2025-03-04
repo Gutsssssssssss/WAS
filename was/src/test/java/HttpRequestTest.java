@@ -39,10 +39,11 @@ public class HttpRequestTest {
 
     @Test
     @DisplayName("요청 startline 파싱 정상 동작 테스트")
-    void testRequestStartLineParsing() {
+    void testRequestStartLineParsing() throws IOException {
         String startLine = "GET /test.html HTTP/1.1";
+        BufferedReader br = new BufferedReader(new StringReader(startLine));
 
-        RequestStartLine parsedStartLine = RequestStartLine.from(startLine);
+        RequestStartLine parsedStartLine = RequestStartLine.from(br);
 
         assertEquals(HttpMethod.GET, parsedStartLine.getMethod());
         assertEquals("/test.html", parsedStartLine.getPath().getPath());
@@ -53,36 +54,45 @@ public class HttpRequestTest {
     @DisplayName("요청 startline 파싱 실패 테스트 - 유효하지 않은 메서드")
     void testRequestStartLineWithWrongMethod() {
         String startLine = "OPTION /test.html HTTP/1.1";
+        BufferedReader br = new BufferedReader(new StringReader(startLine));
 
-        assertThrows(IllegalArgumentException.class, () -> RequestStartLine.from(startLine));
+        assertThrows(IllegalArgumentException.class, () -> RequestStartLine.from(br));
     }
 
     @Test
     @DisplayName("요청 startline 파싱 실패 테스트 - 잘못된 startline 형식")
     void testRequestStartLineWithWrongForm() {
         String startLine = "OPTION /test.html";
+        BufferedReader br = new BufferedReader(new StringReader(startLine));
 
-        assertThrows(IllegalArgumentException.class, () -> RequestStartLine.from(startLine));
+        assertThrows(IllegalArgumentException.class, () -> RequestStartLine.from(br));
     }
 
     @Test
     @DisplayName("요청 startline 파싱 실패 테스트 - HTTP 없는 버전")
     void testRequestStartLineWithInvalidVersion() {
         String startLine = "OPTION /test.html HTTP/1.2";
+        BufferedReader br = new BufferedReader(new StringReader(startLine));
 
-        assertThrows(IllegalArgumentException.class, () -> RequestStartLine.from(startLine));
+        assertThrows(IllegalArgumentException.class, () -> RequestStartLine.from(br));
     }
 
     @Test
     @DisplayName("요청 헤더 파싱 테스트")
-    void testRequestHeaderParsing() {
+    void testRequestHeaderParsing() throws IOException {
         List<String> headerList = Arrays.asList(
                 "Host: localhost:8080",
                 "Connection: keep-alive",
                 "User-Agent: Mozilla/5.0"
         );
+        String header =
+                        "Host: localhost:8080\r\n" +
+                        "Connection: keep-alive\r\n" +
+                        "User-Agent: Mozilla/5.0\r\n";
 
-        RequestHeader requestHeader = RequestHeader.from(headerList);
+        BufferedReader br = new BufferedReader(new StringReader(header));
+
+        RequestHeader requestHeader = RequestHeader.from(br);
         Map<String, String> headers = requestHeader.getHeaders();
         assertEquals(3, headers.size());
         assertEquals("localhost:8080", headers.get("Host"));
