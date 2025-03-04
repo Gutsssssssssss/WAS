@@ -21,30 +21,13 @@ public class RequestBody {
             br.read(buffer, 0, contentLength);
 
             String requestBody = new String(buffer).trim();
-            Map<String, String> parsedBody = parseQueryString(requestBody);
+            Map<String, String> parsedBody = RequestParser.parseQuery(requestBody);
 
             return new RequestBody(parsedBody);
         }
         return empty();
     }
 
-    private static Map<String, String> parseQueryString(String queryString) {
-        if (queryString.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        Map<String, String> result = new HashMap<>();
-        String[] pairs = queryString.split("&");
-
-        for (String pair : pairs) {
-            String[] keyValue = pair.split("=", 2);
-            String key = keyValue[0];
-            String value = keyValue.length > 1 ? keyValue[1] : "";
-            result.put(key, value);
-        }
-
-        return result;
-    }
 
     private static RequestBody empty() {
         return new RequestBody(Collections.emptyMap());
