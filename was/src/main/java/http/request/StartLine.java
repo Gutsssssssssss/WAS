@@ -1,6 +1,5 @@
 package http.request;
 
-import http.HttpMethod;
 import http.HttpVersion;
 import http.Path;
 

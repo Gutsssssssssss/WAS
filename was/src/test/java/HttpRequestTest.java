@@ -1,4 +1,4 @@
-import http.HttpMethod;
+import http.request.HttpMethod;
 import http.HttpVersion;
 import http.Path;
 import http.HttpHeader;
