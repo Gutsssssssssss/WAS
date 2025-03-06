@@ -1,19 +1,21 @@
-package http.request;
+package http;
+
+import http.request.RequestParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
 
-public class RequestHeader {
+public class HttpHeader {
 
     private final Map<String ,String> headers;
 
-    private RequestHeader(Map<String, String> headers) {
+    private HttpHeader(Map<String, String> headers) {
         this.headers = Map.copyOf(headers);
     }
 
-    public static RequestHeader from(BufferedReader br) throws IOException {
-        return new RequestHeader(RequestParser.parseHeader(br));
+    public static HttpHeader from(BufferedReader br) throws IOException {
+        return new HttpHeader(RequestParser.parseHeader(br));
     }
 
     public Map<String, String> getHeaders() {

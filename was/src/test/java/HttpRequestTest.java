@@ -1,5 +1,7 @@
 import http.HttpMethod;
 import http.HttpVersion;
+import http.Path;
+import http.HttpHeader;
 import http.request.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +45,7 @@ public class HttpRequestTest {
         String startLine = "GET /test.html HTTP/1.1";
         BufferedReader br = new BufferedReader(new StringReader(startLine));
 
-        RequestStartLine parsedStartLine = RequestStartLine.from(br);
+        StartLine parsedStartLine = StartLine.from(br);
 
         assertEquals(HttpMethod.GET, parsedStartLine.getMethod());
         assertEquals("/test.html", parsedStartLine.getPath().getPath());
@@ -56,7 +58,7 @@ public class HttpRequestTest {
         String startLine = "OPTION /test.html HTTP/1.1";
         BufferedReader br = new BufferedReader(new StringReader(startLine));
 
-        assertThrows(IllegalArgumentException.class, () -> RequestStartLine.from(br));
+        assertThrows(IllegalArgumentException.class, () -> StartLine.from(br));
     }
 
     @Test
@@ -65,7 +67,7 @@ public class HttpRequestTest {
         String startLine = "OPTION /test.html";
         BufferedReader br = new BufferedReader(new StringReader(startLine));
 
-        assertThrows(IllegalArgumentException.class, () -> RequestStartLine.from(br));
+        assertThrows(IllegalArgumentException.class, () -> StartLine.from(br));
     }
 
     @Test
@@ -74,7 +76,7 @@ public class HttpRequestTest {
         String startLine = "OPTION /test.html HTTP/1.2";
         BufferedReader br = new BufferedReader(new StringReader(startLine));
 
-        assertThrows(IllegalArgumentException.class, () -> RequestStartLine.from(br));
+        assertThrows(IllegalArgumentException.class, () -> StartLine.from(br));
     }
 
     @Test
@@ -92,8 +94,8 @@ public class HttpRequestTest {
 
         BufferedReader br = new BufferedReader(new StringReader(header));
 
-        RequestHeader requestHeader = RequestHeader.from(br);
-        Map<String, String> headers = requestHeader.getHeaders();
+        HttpHeader httpHeader = HttpHeader.from(br);
+        Map<String, String> headers = httpHeader.getHeaders();
         assertEquals(3, headers.size());
         assertEquals("localhost:8080", headers.get("Host"));
         assertEquals("keep-alive", headers.get("Connection"));

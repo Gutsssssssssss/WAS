@@ -2,12 +2,12 @@ package http.request;
 
 import http.HttpMethod;
 import http.HttpVersion;
+import http.Path;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.Buffer;
 
-public class RequestStartLine {
+public class StartLine {
 
     private static final String START_LINE_DELIMITER = "\\s+";
 
@@ -15,13 +15,13 @@ public class RequestStartLine {
     private final Path path;
     private final HttpVersion version;
 
-    private RequestStartLine(HttpMethod method, Path path, HttpVersion version) {
+    private StartLine(HttpMethod method, Path path, HttpVersion version) {
         this.method = method;
         this.path = path;
         this.version = version;
     }
 
-    public static RequestStartLine from(BufferedReader br) throws IOException {
+    public static StartLine from(BufferedReader br) throws IOException {
         String startLine = br.readLine();
         if (startLine == null || startLine.isEmpty()) {
             throw new IllegalArgumentException("Start line cannot be null or empty");
@@ -43,7 +43,7 @@ public class RequestStartLine {
 
         HttpVersion version = HttpVersion.from(parts[2]);
 
-        return new RequestStartLine(method, path, version);
+        return new StartLine(method, path, version);
     }
 
     public HttpMethod getMethod() {

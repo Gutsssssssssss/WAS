@@ -1,7 +1,8 @@
-package http.request;
+package http;
+
+import http.request.RequestParser;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Path {
