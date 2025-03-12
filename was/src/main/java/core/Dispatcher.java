@@ -5,11 +5,11 @@ import http.request.HttpRequest;
 import java.io.*;
 import java.net.Socket;
 
-public class RequestHandler implements Runnable {
+public class Dispatcher implements Runnable {
 
     private final Socket connection;
 
-    public RequestHandler(Socket connection) {
+    public Dispatcher(Socket connection) {
         this.connection = connection;
     }
 

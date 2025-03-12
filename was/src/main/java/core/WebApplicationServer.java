@@ -3,7 +3,6 @@ package core;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,7 +18,7 @@ public class WebApplicationServer {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {
                 Socket connection = serverSocket.accept();
-                executorService.execute(new RequestHandler(connection));
+                executorService.execute(new Dispatcher(connection));
             }
         } catch (IOException e) {
             System.err.println("클라이트 요청 수락 실패: " + e.getMessage());
