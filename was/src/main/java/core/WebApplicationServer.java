@@ -1,5 +1,8 @@
 package core;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -7,6 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class WebApplicationServer {
+    private static final Logger logger = LogManager.getLogger(WebApplicationServer.class);
+
     private static final int PORT = 8080;
     private static final int THREAD_POOL_SIZE = 10;
 
@@ -16,12 +21,14 @@ public class WebApplicationServer {
         ExecutorService executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            logger.info("웹 서버 {} 대기중", PORT);
+
             while (true) {
                 Socket connection = serverSocket.accept();
                 executorService.execute(new Dispatcher(connection));
             }
         } catch (IOException e) {
-            System.err.println("클라이트 요청 수락 실패: " + e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 }

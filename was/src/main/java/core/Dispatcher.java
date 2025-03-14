@@ -1,12 +1,20 @@
 package core;
 
+import handler.Handler;
+import handler.HandlerMatcher;
 import http.request.HttpRequest;
+import http.response.HttpResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.Socket;
+import java.net.URISyntaxException;
+import java.util.Map;
 
 public class Dispatcher implements Runnable {
-
+    private static final Logger logger = LogManager.getLogger(Dispatcher.class);
     private final Socket connection;
 
     public Dispatcher(Socket connection) {
@@ -15,30 +23,33 @@ public class Dispatcher implements Runnable {
 
     @Override
     public void run() {
+        logger.info("클라이언트 연결");
 
-        // 요청으로부터 데이터 읽어들이는 부분
-        // Request 에게 위임
-        try (   Socket socket = connection;
-                InputStream is = socket.getInputStream();
-                OutputStream os = socket.getOutputStream()) {
+        try (Socket socket = connection;
+             InputStream is = socket.getInputStream();
+             DataOutputStream dos = new DataOutputStream(socket.getOutputStream())
+        ) {
 
-            HttpRequest parsedRequest = HttpRequest.from(is);
+            HttpRequest request = HttpRequest.from(is);
+            HttpResponse response = new HttpResponse();
+            Handler handler = HandlerMatcher.match(request.getPath());
 
-            // 응답으로 데이터를 보내는 부분
-            // Response 에게 위임
-            OutputStreamWriter osw = new OutputStreamWriter(os);
-            BufferedWriter bw = new BufferedWriter(osw);
-            String httpResponse =
-                    "HTTP/1.1 200 OK\r\n" +          // HTTP 상태 코드
-                            "Content-Type: text/plain\r\n" + // 헤더: Content-Type 설정
-                            "Content-Length: 13\r\n" +       // 헤더: Content-Length 설정
-                            "\r\n" +                         // 헤더와 바디를 구분하는 빈 줄
-                            "Response Test";
-            bw.write(httpResponse);
-            bw.flush();
+            handler.handle(request, response);
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            dos.writeBytes(String.format("%s %s %s\r%n", response.getStatusLine().getVersion(), response.getStatusLine().getHttpStatus().getCode(), response.getStatusLine().getHttpStatus().getMessage()));
+            for (Map.Entry<String, String> entry : response.getHeader().getHeaders().entrySet()) {
+                dos.writeBytes(String.format("%s: %s\r\n", entry.getKey(), entry.getValue()));
+            }
+            // ✅ 3. 헤더 끝을 의미하는 빈 줄 전송 (CRLF)
+            dos.writeBytes("\r\n");
+
+            // ✅ 4. 본문 (Body) 전송
+            dos.write(response.getResponseBody());
+
+            // ✅ 5. 버퍼 비우기 (flush)
+            dos.flush();
+        } catch (IOException | URISyntaxException e) {
+            logger.error(e.getMessage());
         }
 
     }

@@ -48,7 +48,7 @@ public class HttpRequestTest {
         StartLine parsedStartLine = StartLine.from(br);
 
         assertEquals(HttpMethod.GET, parsedStartLine.getMethod());
-        assertEquals("/test.html", parsedStartLine.getPath().getPath());
+        assertEquals("/test.html", parsedStartLine.getPath());
         assertEquals(HttpVersion.HTTP_1_1, parsedStartLine.getVersion());
     }
 

@@ -49,8 +49,8 @@ public class StartLine {
         return method;
     }
 
-    public Path getPath() {
-        return path;
+    public String getPath() {
+        return path.getPath();
     }
 
     public HttpVersion getVersion() {

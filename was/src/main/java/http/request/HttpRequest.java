@@ -9,9 +9,9 @@ import java.io.InputStreamReader;
 
 public class HttpRequest {
 
-    private StartLine startLine;
-    private HttpHeader httpHeader;
-    private RequestBody requestBody;
+    private final StartLine startLine;
+    private final HttpHeader httpHeader;
+    private final RequestBody requestBody;
 
 
     private HttpRequest(StartLine startLine, HttpHeader httpHeader, RequestBody requestBody) {
@@ -43,5 +43,9 @@ public class HttpRequest {
 
     public RequestBody getRequestBody() {
         return requestBody;
+    }
+
+    public String getPath() {
+        return startLine.getPath();
     }
 }

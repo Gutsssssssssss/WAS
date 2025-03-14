@@ -18,6 +18,14 @@ public class HttpHeader {
         return new HttpHeader(RequestParser.parseHeader(br));
     }
 
+    public static HttpHeader createResponseHeaders(String contentType, int contentLength) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", contentType);
+        headers.put("Content-Length", String.valueOf(contentLength));
+
+        return new HttpHeader(headers);
+    }
+
     public Map<String, String> getHeaders() {
         return headers;
     }
