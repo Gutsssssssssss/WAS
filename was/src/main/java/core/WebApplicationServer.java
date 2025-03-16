@@ -21,7 +21,7 @@ public class WebApplicationServer {
         ExecutorService executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            logger.info("웹 서버 {} 대기중", PORT);
+            logger.info("WebApplicationServer started port : {} ", PORT);
 
             while (true) {
                 Socket connection = serverSocket.accept();

@@ -23,7 +23,7 @@ public class Dispatcher implements Runnable {
 
     @Override
     public void run() {
-        logger.info("클라이언트 연결");
+        logger.info("Client connected");
 
         try (Socket socket = connection;
              InputStream is = socket.getInputStream();
@@ -40,13 +40,13 @@ public class Dispatcher implements Runnable {
             for (Map.Entry<String, String> entry : response.getHeader().getHeaders().entrySet()) {
                 dos.writeBytes(String.format("%s: %s\r\n", entry.getKey(), entry.getValue()));
             }
-            // ✅ 3. 헤더 끝을 의미하는 빈 줄 전송 (CRLF)
+
             dos.writeBytes("\r\n");
 
-            // ✅ 4. 본문 (Body) 전송
+
             dos.write(response.getResponseBody());
 
-            // ✅ 5. 버퍼 비우기 (flush)
+
             dos.flush();
         } catch (IOException | URISyntaxException e) {
             logger.error(e.getMessage());
